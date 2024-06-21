@@ -2,7 +2,7 @@ import 'dotenv/config';
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
 import { fastifySocketIo } from './plugins/socket';
-import { fastifyMongoDb } from './plugins/db';
+import { mongoDbPlugin} from './plugins/db';
 import { registerRoutes } from './routes/mainRoutes';
 import { registerGraphQLRoutes } from "./routes/graphqlRoutes";
 
@@ -23,7 +23,7 @@ const start = async () => {
 
     fastify.log.info("CORS registered");
 
-    await fastify.register(fastifyMongoDb);
+    await fastify.register(mongoDbPlugin);
     await fastify.register(fastifySocketIo);
 
     registerRoutes(fastify);
