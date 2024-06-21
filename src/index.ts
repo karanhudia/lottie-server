@@ -6,7 +6,14 @@ import { fastifyMongoDb } from './plugins/db';
 import { registerRoutes } from './routes/mainRoutes';
 
 const start = async () => {
-    const fastify = Fastify();
+    const fastify = Fastify({
+        logger: {
+            transport: {
+                target: 'pino-pretty',
+            },
+            level: 'debug',
+        }
+    });
 
     // CORS policy
     await fastify.register(cors, {
