@@ -1,50 +1,60 @@
 import { FastifyPluginAsync } from 'fastify';
 import fastifyIO from 'fastify-socket.io';
-import { Lottie } from "../models/lottieModel";
+import { Lottie } from '../models/lottie';
+import { Server } from 'socket.io';
 
-type LottieJSONPayload = {
-    uuid: string;
-    json: JSON;
+declare module 'fastify' {
+  interface FastifyInstance {
+    io: Server;
+  }
 }
 
+type LottieJSONPayload = {
+  uuid: string;
+  json: JSON;
+};
+
 enum LottieJSONSocketEvent {
-    CreateJSON = 'createJSON',
-    UpdateJSON = 'updateJSON'
+  CreateJSON = 'createJSON',
+  UpdateJSON = 'updateJSON',
 }
 
 export const fastifySocketIo: FastifyPluginAsync = async (fastify) => {
-    await fastify.register(fastifyIO);
+  await fastify.register(fastifyIO);
 
-    // @ts-ignore
-    fastify.io.on('connection', (socket) => {
-        fastify.log.info('Socket connected!', socket.id);
+  fastify.io.on('connection', (socket) => {
+    fastify.log.info('Socket connected!', socket.id);
 
-        socket.on(LottieJSONSocketEvent.CreateJSON, (message: LottieJSONPayload) => {
-            fastify.log.info("Creating new Editable JSON lottie");
+    socket.on(LottieJSONSocketEvent.CreateJSON, async (message: LottieJSONPayload) => {
+      fastify.log.info('Creating new Editable JSON lottie');
 
-            Lottie.create({
-                createdAt: new Date(),
-                updatedAt: new Date(),
-                ...message
-            });
-        })
+      await Lottie.create({
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        ...message,
+      });
 
-        socket.on(LottieJSONSocketEvent.UpdateJSON, (message: LottieJSONPayload) => {
-            fastify.log.info("Updating existing UUID", message.uuid);
-
-            Lottie.updateOne(
-                { uuid: message.uuid },
-                {
-                    $set: {
-                        updatedAt: new Date(),
-                        ...message
-                    }
-                }
-            );
-        })
+      fastify.log.info('Added new JSON lottie');
     });
 
-    fastify.addHook('onReady', async () => {
-        fastify.log.info('WebSocket server ready');
+    socket.on(LottieJSONSocketEvent.UpdateJSON, async (message: LottieJSONPayload) => {
+      fastify.log.info('Updating existing UUID', message.uuid);
+
+      await Lottie.updateOne(
+        { uuid: message.uuid },
+        {
+          $set: {
+            updatedAt: new Date(),
+            ...message,
+          },
+        },
+      );
+
+      fastify.log.info('Updated JSON lottie with UUID: ', message.uuid);
     });
+  });
+
+  fastify.addHook('onReady', () => {
+    fastify.log.info('WebSocket server ready');
+  });
 };

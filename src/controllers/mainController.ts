@@ -2,12 +2,11 @@ import { FastifyRequest, FastifyReply } from 'fastify';
 
 export const mainController = {
   handleRoot: (req: FastifyRequest, reply: FastifyReply) => {
-    // @ts-ignore
-    req.server.io.emit('hello');
-    reply.send({ message: 'Hello, World!' });
+    req.server.io.emit('message', 'Websockets connected');
+    void reply.send({ message: 'Websockets connected' });
   },
 
-  handleHealth: async (_req: FastifyRequest, reply: FastifyReply) => {
-    reply.send({ status: 'ok' });
+  handleHealth: (_req: FastifyRequest, reply: FastifyReply) => {
+    void reply.send({ status: 'ok' });
   },
 };
