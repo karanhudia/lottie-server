@@ -6,6 +6,9 @@ import { mongoDbPlugin } from './plugins/db';
 import { registerRoutes } from './routes/mainRoutes';
 import { registerGraphQLRoutes } from './routes/graphqlRoutes';
 
+const host = 'RENDER' in process.env ? `0.0.0.0` : `localhost`;
+const port = process.env.PORT ? Number(process.env.PORT) : 4000;
+
 const start = async () => {
   const fastify = Fastify({
     logger: {
@@ -31,7 +34,8 @@ const start = async () => {
 
   try {
     await fastify.listen({
-      port: process.env.PORT ? Number(process.env.PORT) : 4000,
+      host,
+      port,
     });
     fastify.log.info(`Server started on ${JSON.stringify(fastify.server.address())}`);
   } catch (err) {
