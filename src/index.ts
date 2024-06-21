@@ -21,19 +21,17 @@ const start = async () => {
         origin: true,
     });
 
-    console.info("CORS registered");
+    fastify.log.info("CORS registered");
 
     await fastify.register(fastifyMongoDb);
     await fastify.register(fastifySocketIo);
-
-    console.info("Plugins registered");
 
     registerRoutes(fastify);
     registerGraphQLRoutes(fastify);
 
     try {
         await fastify.listen({ port: process.env.PORT ?? 4000, host: '127.0.0.1' });
-        console.log(`Server started on ${JSON.stringify(fastify.server.address())}`);
+        fastify.log.info(`Server started on ${JSON.stringify(fastify.server.address())}`);
     } catch (err) {
         fastify.log.error(err);
         process.exit(1);

@@ -38,7 +38,7 @@ export const fastifySocketIo: FastifyPluginAsync = async (fastify) => {
     await fastify.register(fastifyIO);
 
     fastify.io.on('connection', (socket: any) => {
-        console.info('Socket connected!', socket.id);
+        fastify.log.info('Socket connected!', socket.id);
         socket.emit('details', 'Please');
         socket.on('details', (message: string) => {
             console.log('Received:', message);
@@ -46,6 +46,6 @@ export const fastifySocketIo: FastifyPluginAsync = async (fastify) => {
     });
 
     fastify.addHook('onReady', async () => {
-        console.log('WebSocket server ready');
+        fastify.log.info('WebSocket server ready');
     });
 };
