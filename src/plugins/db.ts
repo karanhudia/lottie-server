@@ -1,9 +1,9 @@
-import { FastifyInstance, FastifyPluginAsync } from 'fastify';
+import { FastifyPluginCallback } from 'fastify';
 import fp from 'fastify-plugin';
-import { connection, connect } from 'mongoose';
+import { connect, connection } from 'mongoose';
 import { Lottie } from '../models/lottie';
 
-const dbConnector: FastifyPluginAsync = async (fastify: FastifyInstance) => {
+const dbConnector: FastifyPluginCallback = (fastify, _opts, done) => {
   if (!process.env.MONGODB_URI) {
     return;
   }
@@ -15,13 +15,15 @@ const dbConnector: FastifyPluginAsync = async (fastify: FastifyInstance) => {
     connection.on('disconnected', () => {
       fastify.log.error('MongoDB disconnected');
     });
-    await connect(process.env.MONGODB_URI);
+    void connect(process.env.MONGODB_URI);
 
     const models = { Lottie };
     fastify.decorate('db', { models });
   } catch (error) {
     fastify.log.error(error);
   }
+
+  done();
 };
 
 export const mongoDbPlugin = fp(dbConnector);
