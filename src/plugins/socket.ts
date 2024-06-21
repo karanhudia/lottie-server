@@ -7,31 +7,36 @@ type LottieJSONPayload = {
     json: JSON;
 }
 
+enum LottieJSONSocketEvent {
+    CreateJSON = 'createJSON',
+    UpdateJSON = 'updateJSON'
+}
+
 export const fastifySocketIo: FastifyPluginAsync = async (fastify) => {
     await fastify.register(fastifyIO);
 
     // @ts-ignore
-    fastify.io.on('connection', (socket: any) => {
+    fastify.io.on('connection', (socket) => {
         fastify.log.info('Socket connected!', socket.id);
 
-        socket.on('createJSON', (message: LottieJSONPayload) => {
+        socket.on(LottieJSONSocketEvent.CreateJSON, (message: LottieJSONPayload) => {
             fastify.log.info("Creating new Editable JSON lottie");
 
             Lottie.create({
-                created_at: new Date(),
-                last_modified: new Date(),
+                createdAt: new Date(),
+                updatedAt: new Date(),
                 ...message
             });
         })
 
-        socket.on('updateJSON', (message: LottieJSONPayload) => {
+        socket.on(LottieJSONSocketEvent.UpdateJSON, (message: LottieJSONPayload) => {
             fastify.log.info("Updating existing UUID", message.uuid);
 
             Lottie.updateOne(
-                { uuid: message.uuid }, // Filter
+                { uuid: message.uuid },
                 {
                     $set: {
-                        last_modified: new Date(),
+                        updatedAt: new Date(),
                         ...message
                     }
                 }
