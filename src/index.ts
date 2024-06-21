@@ -4,6 +4,7 @@ import cors from '@fastify/cors';
 import { fastifySocketIo } from './plugins/socket';
 import { fastifyMongoDb } from './plugins/db';
 import { registerRoutes } from './routes/mainRoutes';
+import { registerGraphQLRoutes } from "./routes/graphqlRoutes";
 
 const start = async () => {
     const fastify = Fastify({
@@ -28,8 +29,7 @@ const start = async () => {
     console.info("Plugins registered");
 
     registerRoutes(fastify);
-
-    console.info("Routes registered");
+    registerGraphQLRoutes(fastify);
 
     try {
         await fastify.listen({ port: process.env.PORT ?? 4000, host: '127.0.0.1' });
