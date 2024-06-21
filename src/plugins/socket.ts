@@ -1,48 +1,42 @@
 import { FastifyPluginAsync } from 'fastify';
 import fastifyIO from 'fastify-socket.io';
-import { Server } from 'socket.io';
+import { Lottie } from "../models/lottieModel";
 
-interface ServerToClientEvents {
-    noArg: () => void;
-    basicEmit: (a: number, b: string, c: Buffer) => void;
-    withAck: (d: string, callback: (e: number) => void) => void;
-}
-
-interface ClientToServerEvents {
-    hello: () => void;
-}
-
-interface InterServerEvents {
-    ping: () => void;
-}
-
-interface SocketData {
-    name: string;
-    age: number;
-}
-
-export const io = new Server<
-    ClientToServerEvents,
-    ServerToClientEvents,
-    InterServerEvents,
-    SocketData
->();
-
-declare module 'fastify' {
-    interface FastifyInstance {
-        io: typeof io;
-    }
+type LottieJSONPayload = {
+    uuid: string;
+    json: JSON;
 }
 
 export const fastifySocketIo: FastifyPluginAsync = async (fastify) => {
     await fastify.register(fastifyIO);
 
+    // @ts-ignore
     fastify.io.on('connection', (socket: any) => {
         fastify.log.info('Socket connected!', socket.id);
-        socket.emit('details', 'Please');
-        socket.on('details', (message: string) => {
-            console.log('Received:', message);
-        });
+
+        socket.on('createJSON', (message: LottieJSONPayload) => {
+            fastify.log.info("Creating new Editable JSON lottie");
+
+            Lottie.create({
+                created_at: new Date(),
+                last_modified: new Date(),
+                ...message
+            });
+        })
+
+        socket.on('updateJSON', (message: LottieJSONPayload) => {
+            fastify.log.info("Updating existing UUID", message.uuid);
+
+            Lottie.updateOne(
+                { uuid: message.uuid }, // Filter
+                {
+                    $set: {
+                        last_modified: new Date(),
+                        ...message
+                    }
+                }
+            );
+        })
     });
 
     fastify.addHook('onReady', async () => {
