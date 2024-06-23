@@ -3,7 +3,13 @@ import fastifyIO from 'fastify-socket.io';
 import { Lottie } from '../models/lottie';
 import { Server } from 'socket.io';
 import { updateLottieColorProperty } from '../utils/lottie';
-import { CreateLottieMessage, LottieSocketEvents, UpdateLottieMessage } from '../graphql/generated';
+import {
+  CreateLottieMessage,
+  LottieAnimation,
+  LottieSocketEvents,
+  SocketAcknowledgement,
+  UpdateLottieMessage,
+} from '../graphql/generated';
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -17,36 +23,45 @@ export const fastifySocketIo: FastifyPluginAsync = async (fastify) => {
   fastify.io.on('connection', (socket) => {
     fastify.log.info('Socket connected!', socket.id);
 
-    socket.on(LottieSocketEvents.CreateJson, async (message: CreateLottieMessage) => {
-      fastify.log.info('Creating:: JSON lottie');
+    socket.on(
+      LottieSocketEvents.CreateJson,
+      async (
+        message: CreateLottieMessage,
+        acknowledgement: (response: SocketAcknowledgement) => void,
+      ) => {
+        fastify.log.info('Creating:: JSON lottie');
 
-      try {
-        await Lottie.create({
-          createdAt: new Date(),
-          updatedAt: new Date(),
-          uuid: message.uuid,
-          json: message.payload?.json,
-        });
+        try {
+          await Lottie.create({
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            uuid: message.uuid,
+            json: message.payload?.json,
+          });
 
-        fastify.log.info('Created:: JSON lottie');
+          fastify.log.info('Created:: JSON lottie');
 
-        return {
-          code: 200,
-          status: 'ok',
-        };
-      } catch {
-        fastify.log.error('Error:: JSON lottie');
+          acknowledgement({
+            code: 200,
+            status: 'ok',
+          });
+        } catch {
+          fastify.log.error('Error:: JSON lottie');
 
-        return {
-          code: 500,
-          status: 'Could not create new JSON',
-        };
-      }
-    });
+          acknowledgement({
+            code: 500,
+            status: 'Could not create new JSON',
+          });
+        }
+      },
+    );
 
     socket.on(
       LottieSocketEvents.UpdateJson,
-      async (message: UpdateLottieMessage, acknowledgement) => {
+      async (
+        message: UpdateLottieMessage,
+        acknowledgement: (response: SocketAcknowledgement) => void,
+      ) => {
         fastify.log.info(`Updating(${message.uuid}):: JSON lottie`);
 
         const foundLottie = await Lottie.findOne({ uuid: message.uuid });
@@ -54,10 +69,12 @@ export const fastifySocketIo: FastifyPluginAsync = async (fastify) => {
         if (!foundLottie) {
           fastify.log.error(`Updating(${message.uuid}):: JSON lottie not found`);
 
-          return {
+          acknowledgement({
             code: 404,
             status: 'Could not find JSON',
-          };
+          });
+
+          return;
         }
 
         try {
@@ -66,7 +83,8 @@ export const fastifySocketIo: FastifyPluginAsync = async (fastify) => {
           switch (message.payload.__typename) {
             case 'ColorPayload':
               updatedLottie = updateLottieColorProperty(
-                foundLottie.json,
+                fastify,
+                foundLottie.json as LottieAnimation,
                 message.payload.layer,
                 message.payload.shape,
                 message.payload.shapeItem,
