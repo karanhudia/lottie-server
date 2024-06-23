@@ -187,6 +187,12 @@ export type ShapeProperty = {
   k: ShapeKeyframe;
 };
 
+export type SocketAcknowledgement = {
+  __typename?: 'SocketAcknowledgement';
+  code: Scalars['Int']['output'];
+  status: Scalars['String']['output'];
+};
+
 export type SpeedPayload = {
   __typename?: 'SpeedPayload';
   frameRate: Scalars['Int']['output'];
@@ -344,6 +350,7 @@ export type ResolversTypes = {
   ShapeItem: ResolverTypeWrapper<ShapeItem>;
   ShapeKeyframe: ResolverTypeWrapper<ShapeKeyframe>;
   ShapeProperty: ResolverTypeWrapper<ShapeProperty>;
+  SocketAcknowledgement: ResolverTypeWrapper<SocketAcknowledgement>;
   SpeedPayload: ResolverTypeWrapper<SpeedPayload>;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
   Transform: ResolverTypeWrapper<Transform>;
@@ -382,6 +389,7 @@ export type ResolversParentTypes = {
   ShapeItem: ShapeItem;
   ShapeKeyframe: ShapeKeyframe;
   ShapeProperty: ShapeProperty;
+  SocketAcknowledgement: SocketAcknowledgement;
   SpeedPayload: SpeedPayload;
   String: Scalars['String']['output'];
   Transform: Transform;
@@ -620,6 +628,16 @@ export type ShapePropertyResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type SocketAcknowledgementResolvers<
+  ContextType = any,
+  ParentType extends
+    ResolversParentTypes['SocketAcknowledgement'] = ResolversParentTypes['SocketAcknowledgement'],
+> = {
+  code?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  status?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type SpeedPayloadResolvers<
   ContextType = any,
   ParentType extends ResolversParentTypes['SpeedPayload'] = ResolversParentTypes['SpeedPayload'],
@@ -706,6 +724,7 @@ export type Resolvers<ContextType = any> = {
   ShapeItem?: ShapeItemResolvers<ContextType>;
   ShapeKeyframe?: ShapeKeyframeResolvers<ContextType>;
   ShapeProperty?: ShapePropertyResolvers<ContextType>;
+  SocketAcknowledgement?: SocketAcknowledgementResolvers<ContextType>;
   SpeedPayload?: SpeedPayloadResolvers<ContextType>;
   Transform?: TransformResolvers<ContextType>;
   UpdateLottieColorMessage?: UpdateLottieColorMessageResolvers<ContextType>;

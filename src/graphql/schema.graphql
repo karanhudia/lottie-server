@@ -2,6 +2,11 @@ scalar File
 scalar Date
 scalar JSON
 
+type SocketAcknowledgement {
+    code: Int!
+    status: String!
+}
+
 type Asset {
     id: String
     w: Int
@@ -124,7 +129,7 @@ enum LottieSocketEvents {
 }
 
 type CreateLottiePayload {
-    json: LottieAnimation!
+    json: JSON!
 }
 
 type CreateLottieMessage {
@@ -171,7 +176,7 @@ type Lottie {
     createdAt: Date!
     updatedAt: Date!
     uuid: String!
-    json: LottieAnimation!
+    json: JSON!
 }
 
 type Query {
