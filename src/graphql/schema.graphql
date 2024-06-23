@@ -2,13 +2,129 @@ scalar File
 scalar Date
 scalar JSON
 
+type Asset {
+    id: String
+    w: Int
+    h: Int
+    u: String
+    p: String
+    e: Int
+    layers: [Layer]
+}
+
+type Layer {
+    ddd: Int!
+    ind: Int!
+    ty: Int!
+    nm: String!
+    sr: Float!
+    ks: Transform!
+    ao: Int
+    shapes: [Shape]
+    ip: Int!
+    op: Int!
+    st: Int!
+    ct: Int
+    bm: Int!
+}
+
+type Transform {
+    o: Property!
+    r: Property!
+    p: Property!
+    a: Property!
+    s: AnimatedProperty!
+    ix: Int
+    l: Int
+}
+
+type Property {
+    a: Int!
+    k: JSON! # Using JSON as GraphQL does not have an "any" type
+    ix: Int!
+}
+
+type AnimatedProperty {
+    a: Int!
+    k: [Keyframe!]!
+    ix: Int!
+    l: Int
+}
+
+type Keyframe {
+    i: Easing!
+    o: Easing!
+    t: Int!
+    s: [Float!]!
+}
+
+type Easing {
+    x: [Float!]!
+    y: [Float!]!
+}
+
+type Shape {
+    ty: String!
+    it: [ShapeItem]
+    nm: String!
+    np: Int!
+    cix: Int!
+    bm: Int!
+    ix: Int!
+    mn: String!
+    hd: Boolean!
+}
+
+type Color {
+    a: Int!
+    k: [Int!]! # RGBA values
+    ix: Int!
+}
+
+type ShapeItem {
+    ind: Int!
+    ty: String!
+    ix: Int!
+    ks: ShapeProperty
+    c: Color # Color property
+    nm: String!
+    mn: String!
+    hd: Boolean!
+}
+
+type ShapeProperty {
+    a: Int!
+    k: ShapeKeyframe!
+    ix: Int!
+}
+
+type ShapeKeyframe {
+    i: [[Float!]!]!
+    o: [[Float!]!]!
+    v: [[Float!]!]!
+    c: Boolean!
+}
+
+type LottieAnimation {
+    v: String!
+    fr: Float! # Frame Rate
+    ip: Int!
+    op: Int!
+    w: Int!
+    h: Int!
+    nm: String!
+    ddd: Int!
+    assets: [Asset!]!
+    layers: [Layer!]!
+}
+
 enum LottieSocketEvents {
     Create_Json
     Update_Json
 }
 
 type CreateLottiePayload {
-    json: JSON!
+    json: LottieAnimation!
 }
 
 type CreateLottieMessage {
@@ -55,7 +171,7 @@ type Lottie {
     createdAt: Date!
     updatedAt: Date!
     uuid: String!
-    json: JSON!
+    json: LottieAnimation!
 }
 
 type Query {
