@@ -1,0 +1,63 @@
+scalar File
+scalar Date
+scalar JSON
+
+enum LottieSocketEvents {
+    Create_Json
+    Update_Json
+}
+
+type CreateLottiePayload {
+    json: JSON!
+}
+
+type CreateLottieMessage {
+    uuid: String!
+    payload: CreateLottiePayload
+}
+
+type ColorPayload {
+    layer: Int!
+    shape: Int!
+    shapeItem: Int!
+    color: [Int!]!
+}
+
+type SpeedPayload {
+    frameRate: Int!
+}
+
+type ScalePayload {
+    scale: Float!
+}
+
+union UpdateLottieMessage =
+    | UpdateLottieColorMessage
+    | UpdateLottieSpeedMessage
+    | UpdateLottieScaleMessage
+
+type UpdateLottieColorMessage {
+    uuid: String!
+    payload: ColorPayload!
+}
+
+type UpdateLottieSpeedMessage {
+    uuid: String!
+    payload: SpeedPayload!
+}
+
+type UpdateLottieScaleMessage {
+    uuid: String!
+    payload: ScalePayload!
+}
+
+type Lottie {
+    createdAt: Date!
+    updatedAt: Date!
+    uuid: String!
+    json: JSON!
+}
+
+type Query {
+    lottie(uuid: ID!): Lottie
+}

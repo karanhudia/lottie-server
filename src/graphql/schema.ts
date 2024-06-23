@@ -1,23 +1,12 @@
 import { createSchema } from 'graphql-yoga';
-import { Lottie } from './models/lottie';
+import { Lottie } from '../models/lottie';
+import path from 'node:path';
+import { importSchema } from 'graphql-import';
+
+const typeDefs = importSchema(path.join(__dirname, 'schema.graphql'));
 
 export const schema = createSchema({
-  typeDefs: /* GraphQL */ `
-    scalar File
-    scalar Date
-    scalar JSON
-
-    type Lottie {
-      createdAt: Date!
-      updatedAt: Date!
-      uuid: String!
-      json: JSON!
-    }
-
-    type Query {
-      lottie(uuid: ID!): Lottie
-    }
-  `,
+  typeDefs,
   resolvers: {
     Query: {
       lottie: async (_, _args: { uuid: string }) => {
