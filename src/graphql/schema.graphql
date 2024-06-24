@@ -25,7 +25,8 @@ type Layer {
     sr: Float!
     ks: Transform!
     ao: Int
-    shapes: [Shape]
+    shapes: [Shape!]
+    layers: [Layer!]
     ip: Int!
     op: Int!
     st: Int!
@@ -138,7 +139,7 @@ type CreateLottieMessage {
 }
 
 type ColorPayload {
-    layer: Int!
+    layer: [Int!]!
     shape: Int!
     shapeItem: Int!
     color: [Int!]!
@@ -152,10 +153,15 @@ type ScalePayload {
     scale: Float!
 }
 
+type LayerPayload {
+    layer: Int!
+}
+
 union UpdateLottieMessage =
     | UpdateLottieColorMessage
     | UpdateLottieSpeedMessage
     | UpdateLottieScaleMessage
+    | DeleteLottieLayerMessage
 
 type UpdateLottieColorMessage {
     uuid: String!
@@ -170,6 +176,11 @@ type UpdateLottieSpeedMessage {
 type UpdateLottieScaleMessage {
     uuid: String!
     payload: ScalePayload!
+}
+
+type DeleteLottieLayerMessage {
+    uuid: String!
+    payload: LayerPayload!
 }
 
 type Lottie {

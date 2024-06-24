@@ -52,7 +52,7 @@ export type Color = {
 export type ColorPayload = {
   __typename?: 'ColorPayload';
   color: Array<Scalars['Int']['output']>;
-  layer: Scalars['Int']['output'];
+  layer: Array<Scalars['Int']['output']>;
   shape: Scalars['Int']['output'];
   shapeItem: Scalars['Int']['output'];
 };
@@ -65,7 +65,13 @@ export type CreateLottieMessage = {
 
 export type CreateLottiePayload = {
   __typename?: 'CreateLottiePayload';
-  json: LottieAnimation;
+  json: Scalars['JSON']['output'];
+};
+
+export type DeleteLottieLayerMessage = {
+  __typename?: 'DeleteLottieLayerMessage';
+  payload: LayerPayload;
+  uuid: Scalars['String']['output'];
 };
 
 export type Easing = {
@@ -91,18 +97,24 @@ export type Layer = {
   ind: Scalars['Int']['output'];
   ip: Scalars['Int']['output'];
   ks: Transform;
+  layers?: Maybe<Array<Layer>>;
   nm: Scalars['String']['output'];
   op: Scalars['Int']['output'];
-  shapes?: Maybe<Array<Maybe<Shape>>>;
+  shapes?: Maybe<Array<Shape>>;
   sr: Scalars['Float']['output'];
   st: Scalars['Int']['output'];
   ty: Scalars['Int']['output'];
 };
 
+export type LayerPayload = {
+  __typename?: 'LayerPayload';
+  layer: Scalars['Int']['output'];
+};
+
 export type Lottie = {
   __typename?: 'Lottie';
   createdAt: Scalars['Date']['output'];
-  json: LottieAnimation;
+  json: Scalars['JSON']['output'];
   updatedAt: Scalars['Date']['output'];
   uuid: Scalars['String']['output'];
 };
@@ -216,6 +228,7 @@ export type UpdateLottieColorMessage = {
 };
 
 export type UpdateLottieMessage =
+  | DeleteLottieLayerMessage
   | UpdateLottieColorMessage
   | UpdateLottieScaleMessage
   | UpdateLottieSpeedMessage;
@@ -317,6 +330,7 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping of union types */
 export type ResolversUnionTypes<_RefType extends Record<string, unknown>> = {
   UpdateLottieMessage:
+    | DeleteLottieLayerMessage
     | UpdateLottieColorMessage
     | UpdateLottieScaleMessage
     | UpdateLottieSpeedMessage;
@@ -332,6 +346,7 @@ export type ResolversTypes = {
   CreateLottieMessage: ResolverTypeWrapper<CreateLottieMessage>;
   CreateLottiePayload: ResolverTypeWrapper<CreateLottiePayload>;
   Date: ResolverTypeWrapper<Scalars['Date']['output']>;
+  DeleteLottieLayerMessage: ResolverTypeWrapper<DeleteLottieLayerMessage>;
   Easing: ResolverTypeWrapper<Easing>;
   File: ResolverTypeWrapper<Scalars['File']['output']>;
   Float: ResolverTypeWrapper<Scalars['Float']['output']>;
@@ -340,6 +355,7 @@ export type ResolversTypes = {
   JSON: ResolverTypeWrapper<Scalars['JSON']['output']>;
   Keyframe: ResolverTypeWrapper<Keyframe>;
   Layer: ResolverTypeWrapper<Layer>;
+  LayerPayload: ResolverTypeWrapper<LayerPayload>;
   Lottie: ResolverTypeWrapper<Lottie>;
   LottieAnimation: ResolverTypeWrapper<LottieAnimation>;
   LottieSocketEvents: LottieSocketEvents;
@@ -372,6 +388,7 @@ export type ResolversParentTypes = {
   CreateLottieMessage: CreateLottieMessage;
   CreateLottiePayload: CreateLottiePayload;
   Date: Scalars['Date']['output'];
+  DeleteLottieLayerMessage: DeleteLottieLayerMessage;
   Easing: Easing;
   File: Scalars['File']['output'];
   Float: Scalars['Float']['output'];
@@ -380,6 +397,7 @@ export type ResolversParentTypes = {
   JSON: Scalars['JSON']['output'];
   Keyframe: Keyframe;
   Layer: Layer;
+  LayerPayload: LayerPayload;
   Lottie: Lottie;
   LottieAnimation: LottieAnimation;
   Property: Property;
@@ -440,7 +458,7 @@ export type ColorPayloadResolvers<
   ParentType extends ResolversParentTypes['ColorPayload'] = ResolversParentTypes['ColorPayload'],
 > = {
   color?: Resolver<Array<ResolversTypes['Int']>, ParentType, ContextType>;
-  layer?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  layer?: Resolver<Array<ResolversTypes['Int']>, ParentType, ContextType>;
   shape?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   shapeItem?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -461,13 +479,23 @@ export type CreateLottiePayloadResolvers<
   ParentType extends
     ResolversParentTypes['CreateLottiePayload'] = ResolversParentTypes['CreateLottiePayload'],
 > = {
-  json?: Resolver<ResolversTypes['LottieAnimation'], ParentType, ContextType>;
+  json?: Resolver<ResolversTypes['JSON'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export interface DateScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Date'], any> {
   name: 'Date';
 }
+
+export type DeleteLottieLayerMessageResolvers<
+  ContextType = any,
+  ParentType extends
+    ResolversParentTypes['DeleteLottieLayerMessage'] = ResolversParentTypes['DeleteLottieLayerMessage'],
+> = {
+  payload?: Resolver<ResolversTypes['LayerPayload'], ParentType, ContextType>;
+  uuid?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
 
 export type EasingResolvers<
   ContextType = any,
@@ -508,12 +536,21 @@ export type LayerResolvers<
   ind?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   ip?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   ks?: Resolver<ResolversTypes['Transform'], ParentType, ContextType>;
+  layers?: Resolver<Maybe<Array<ResolversTypes['Layer']>>, ParentType, ContextType>;
   nm?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   op?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  shapes?: Resolver<Maybe<Array<Maybe<ResolversTypes['Shape']>>>, ParentType, ContextType>;
+  shapes?: Resolver<Maybe<Array<ResolversTypes['Shape']>>, ParentType, ContextType>;
   sr?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   st?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   ty?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type LayerPayloadResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['LayerPayload'] = ResolversParentTypes['LayerPayload'],
+> = {
+  layer?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -522,7 +559,7 @@ export type LottieResolvers<
   ParentType extends ResolversParentTypes['Lottie'] = ResolversParentTypes['Lottie'],
 > = {
   createdAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
-  json?: Resolver<ResolversTypes['LottieAnimation'], ParentType, ContextType>;
+  json?: Resolver<ResolversTypes['JSON'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
   uuid?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -676,7 +713,10 @@ export type UpdateLottieMessageResolvers<
     ResolversParentTypes['UpdateLottieMessage'] = ResolversParentTypes['UpdateLottieMessage'],
 > = {
   __resolveType: TypeResolveFn<
-    'UpdateLottieColorMessage' | 'UpdateLottieScaleMessage' | 'UpdateLottieSpeedMessage',
+    | 'DeleteLottieLayerMessage'
+    | 'UpdateLottieColorMessage'
+    | 'UpdateLottieScaleMessage'
+    | 'UpdateLottieSpeedMessage',
     ParentType,
     ContextType
   >;
@@ -710,11 +750,13 @@ export type Resolvers<ContextType = any> = {
   CreateLottieMessage?: CreateLottieMessageResolvers<ContextType>;
   CreateLottiePayload?: CreateLottiePayloadResolvers<ContextType>;
   Date?: GraphQLScalarType;
+  DeleteLottieLayerMessage?: DeleteLottieLayerMessageResolvers<ContextType>;
   Easing?: EasingResolvers<ContextType>;
   File?: GraphQLScalarType;
   JSON?: GraphQLScalarType;
   Keyframe?: KeyframeResolvers<ContextType>;
   Layer?: LayerResolvers<ContextType>;
+  LayerPayload?: LayerPayloadResolvers<ContextType>;
   Lottie?: LottieResolvers<ContextType>;
   LottieAnimation?: LottieAnimationResolvers<ContextType>;
   Property?: PropertyResolvers<ContextType>;

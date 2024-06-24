@@ -2,7 +2,11 @@ import { FastifyPluginAsync } from 'fastify';
 import fastifyIO from 'fastify-socket.io';
 import { Lottie } from '../models/lottie';
 import { Server } from 'socket.io';
-import { updateLottieColorProperty } from '../utils/lottie';
+import {
+  deleteLottieLayerProperty,
+  updateLottieColorProperty,
+  updateLottieSpeedProperty,
+} from '../utils/lottie';
 import {
   CreateLottieMessage,
   LottieAnimation,
@@ -95,13 +99,19 @@ export const fastifySocketIo: FastifyPluginAsync = async (fastify) => {
               break;
 
             case 'SpeedPayload':
-              updatedLottie = {
-                ...foundLottie.json,
-                fr: message.payload.frameRate,
-              };
+              updatedLottie = updateLottieSpeedProperty(
+                foundLottie.json as LottieAnimation,
+                message.payload.frameRate,
+              );
 
               fastify.log.info(`Updating(${message.uuid}):: JSON lottie speed`);
               break;
+            case 'LayerPayload':
+              updatedLottie = deleteLottieLayerProperty(
+                fastify,
+                foundLottie.json as LottieAnimation,
+                message.payload.layer,
+              );
           }
 
           await Lottie.updateOne(
