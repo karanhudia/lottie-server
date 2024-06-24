@@ -112,6 +112,9 @@ export const fastifySocketIo: FastifyPluginAsync = async (fastify) => {
                 foundLottie.json as LottieAnimation,
                 message.payload.layer,
               );
+
+              fastify.log.info(`Updating(${message.uuid}):: JSON lottie layer deleted`);
+              break;
           }
 
           await Lottie.updateOne(
