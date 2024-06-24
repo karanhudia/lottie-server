@@ -72,7 +72,7 @@ export const deleteLottieLayerProperty = (
 
   let layer: Layer = newObj.layers[layerSeq];
   if (!layer) {
-    fastify.log.error('ColorUpdate:: Layer not found', layer);
+    fastify.log.error('LayerDelete:: Layer not found', layer);
     return obj;
   }
 
