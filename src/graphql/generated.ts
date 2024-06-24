@@ -108,7 +108,7 @@ export type Layer = {
 
 export type LayerPayload = {
   __typename?: 'LayerPayload';
-  layer: Scalars['Int']['output'];
+  layer: Array<Scalars['Int']['output']>;
 };
 
 export type Lottie = {
@@ -562,7 +562,7 @@ export type LayerPayloadResolvers<
   ContextType = any,
   ParentType extends ResolversParentTypes['LayerPayload'] = ResolversParentTypes['LayerPayload'],
 > = {
-  layer?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  layer?: Resolver<Array<ResolversTypes['Int']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

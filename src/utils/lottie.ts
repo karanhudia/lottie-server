@@ -66,21 +66,34 @@ export const updateLottieSpeedProperty = (obj: LottieAnimation, frameRate: numbe
 export const deleteLottieLayerProperty = (
   fastify: FastifyInstance,
   obj: LottieAnimation,
-  layerSeq: number,
+  layerSeq: number[],
 ) => {
   let newObj = { ...obj };
 
-  let layer: Layer = newObj.layers[layerSeq];
+  let layer: Layer = newObj.layers[layerSeq[0]];
   if (!layer) {
     fastify.log.error('LayerDelete:: Layer not found', layer);
     return obj;
   }
+  // Check if nested layers exist and the specific layer exists
+  let i = 1;
+  while (i < layerSeq.length - 1) {
+    if (layer?.layers?.[layerSeq[i]]) {
+      layer = layer.layers[layerSeq[i]];
 
-  return {
-    ...newObj,
-    layers: {
-      ...newObj.layers.slice(0, layerSeq),
-      ...newObj.layers.slice(layerSeq + 1, newObj.layers.length),
-    },
-  };
+      i++;
+    } else {
+      fastify.log.error('LayerDelete:: Layer not found', layer, i);
+      return obj;
+    }
+  }
+
+  if (!layer.layers?.[layerSeq[i]]) {
+    fastify.log.error('LayerDelete:: Layer not found', layer, i);
+    return obj;
+  }
+
+  delete layer.layers[layerSeq[i]];
+
+  return newObj;
 };

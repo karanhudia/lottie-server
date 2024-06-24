@@ -154,7 +154,7 @@ type ScalePayload {
 }
 
 type LayerPayload {
-    layer: Int!
+    layer: [Int!]!
 }
 
 union UpdateLottieMessage =
