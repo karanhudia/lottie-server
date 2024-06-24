@@ -68,9 +68,9 @@ export const deleteLottieLayerProperty = (
   obj: LottieAnimation,
   layerSeq: number[],
 ) => {
-  let newObj = { ...obj };
+  const newObj = { ...obj };
 
-  let layer: Layer = newObj.layers[layerSeq[0]];
+  let layer: Layer | undefined = newObj.layers[layerSeq[0]];
   if (!layer) {
     fastify.log.error('LayerDelete:: Layer not found', layer);
     return obj;
@@ -88,12 +88,14 @@ export const deleteLottieLayerProperty = (
     }
   }
 
-  if (!layer.layers?.[layerSeq[i]]) {
-    fastify.log.error('LayerDelete:: Layer not found', layer, i);
+  // Check if the target layer to delete exists
+  const targetIndex = layerSeq[layerSeq.length - 1];
+  if (layer.layers?.[targetIndex]) {
+    layer.layers.splice(targetIndex, 1);
+  } else {
+    fastify.log.error('LayerDelete:: Layer to delete not found');
     return obj;
   }
-
-  delete layer.layers[layerSeq[i]];
 
   return newObj;
 };
