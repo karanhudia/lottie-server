@@ -193,3 +193,7 @@ type Lottie {
 type Query {
     lottie(uuid: ID!): Lottie
 }
+
+type Mutation {
+    createLottie(uuid: ID!, json: JSON): SocketAcknowledgement
+}

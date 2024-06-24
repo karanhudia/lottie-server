@@ -138,6 +138,16 @@ export enum LottieSocketEvents {
   UpdateJson = 'Update_Json',
 }
 
+export type Mutation = {
+  __typename?: 'Mutation';
+  createLottie?: Maybe<SocketAcknowledgement>;
+};
+
+export type MutationCreateLottieArgs = {
+  json?: InputMaybe<Scalars['JSON']['input']>;
+  uuid: Scalars['ID']['input'];
+};
+
 export type Property = {
   __typename?: 'Property';
   a: Scalars['Int']['output'];
@@ -359,6 +369,7 @@ export type ResolversTypes = {
   Lottie: ResolverTypeWrapper<Lottie>;
   LottieAnimation: ResolverTypeWrapper<LottieAnimation>;
   LottieSocketEvents: LottieSocketEvents;
+  Mutation: ResolverTypeWrapper<{}>;
   Property: ResolverTypeWrapper<Property>;
   Query: ResolverTypeWrapper<{}>;
   ScalePayload: ResolverTypeWrapper<ScalePayload>;
@@ -400,6 +411,7 @@ export type ResolversParentTypes = {
   LayerPayload: LayerPayload;
   Lottie: Lottie;
   LottieAnimation: LottieAnimation;
+  Mutation: {};
   Property: Property;
   Query: {};
   ScalePayload: ScalePayload;
@@ -583,6 +595,18 @@ export type LottieAnimationResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type MutationResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation'],
+> = {
+  createLottie?: Resolver<
+    Maybe<ResolversTypes['SocketAcknowledgement']>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationCreateLottieArgs, 'uuid'>
+  >;
+};
+
 export type PropertyResolvers<
   ContextType = any,
   ParentType extends ResolversParentTypes['Property'] = ResolversParentTypes['Property'],
@@ -759,6 +783,7 @@ export type Resolvers<ContextType = any> = {
   LayerPayload?: LayerPayloadResolvers<ContextType>;
   Lottie?: LottieResolvers<ContextType>;
   LottieAnimation?: LottieAnimationResolvers<ContextType>;
+  Mutation?: MutationResolvers<ContextType>;
   Property?: PropertyResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   ScalePayload?: ScalePayloadResolvers<ContextType>;
