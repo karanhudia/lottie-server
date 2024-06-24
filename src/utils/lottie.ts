@@ -1,21 +1,33 @@
-import { LottieAnimation } from '../graphql/generated';
+import { Layer, LottieAnimation } from '../graphql/generated';
 import { FastifyInstance } from 'fastify';
 
 export const updateLottieColorProperty = (
   fastify: FastifyInstance,
   obj: LottieAnimation,
-  layerSeq: number,
+  layerSeq: number[],
   shapeSeq: number,
   shapeItemSeq: number,
   color: number[],
 ) => {
-  // Check if layers exist and the specific layer exists
-  if (!obj.layers?.[layerSeq]) {
-    fastify.log.error('ColorUpdate:: Layer not found');
+  let newObj = { ...obj };
+
+  let layer: Layer = newObj.layers[layerSeq[0]];
+  if (!layer) {
+    fastify.log.error('ColorUpdate:: Layer not found', layer);
     return obj;
   }
+  // Check if nested layers exist and the specific layer exists
+  let i = 1;
+  while (i < layerSeq.length) {
+    if (layer?.layers?.[layerSeq[i]]) {
+      layer = layer.layers[layerSeq[i]];
 
-  const layer = obj.layers[layerSeq];
+      i++;
+    } else {
+      fastify.log.error('ColorUpdate:: Layer not found', layer, i);
+      return obj;
+    }
+  }
 
   // Check if shapes exist and the specific shape exists
   if (!layer.shapes || !layer.shapes[shapeSeq]) {
@@ -39,33 +51,36 @@ export const updateLottieColorProperty = (
     return obj;
   }
 
-  // Perform the update immutably using spread operators
+  item.c.k = color;
+
+  return newObj;
+};
+
+export const updateLottieSpeedProperty = (obj: LottieAnimation, frameRate: number) => {
   return {
     ...obj,
-    layers: [
-      ...obj.layers.slice(0, layerSeq),
-      {
-        ...layer,
-        shapes: [
-          ...layer.shapes.slice(0, shapeSeq),
-          {
-            ...shape,
-            it: [
-              ...shape.it.slice(0, shapeItemSeq),
-              {
-                ...item,
-                c: {
-                  ...item.c,
-                  k: color,
-                },
-              },
-              ...shape.it.slice(shapeItemSeq + 1),
-            ],
-          },
-          ...layer.shapes.slice(shapeSeq + 1),
-        ],
-      },
-      ...obj.layers.slice(layerSeq + 1),
-    ],
+    fr: frameRate,
+  };
+};
+
+export const deleteLottieLayerProperty = (
+  fastify: FastifyInstance,
+  obj: LottieAnimation,
+  layerSeq: number,
+) => {
+  let newObj = { ...obj };
+
+  let layer: Layer = newObj.layers[layerSeq];
+  if (!layer) {
+    fastify.log.error('ColorUpdate:: Layer not found', layer);
+    return obj;
+  }
+
+  return {
+    ...newObj,
+    layers: {
+      ...newObj.layers.slice(0, layerSeq),
+      ...newObj.layers.slice(layerSeq + 1, newObj.layers.length),
+    },
   };
 };
