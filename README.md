@@ -85,6 +85,15 @@ To run the test suite, use: `yarn test`
     ├── utils/            # Utility functions
     └── index.ts          # Entry point of the server
 
+## GraphQL and Codegen
+
+We are using [graphql-codegen](https://the-guild.dev/graphql/codegen) to generate GraphQL types for the schemas used.
+You can find the configuration file for the [codegen here](https://github.com/karanhudia/lottie-server/blob/main/codegen.ts).
+
+The script has to be run everytime you change the 
+[schema.graphql](https://github.com/karanhudia/lottie-server/blob/main/src/graphql/schema.graphql#L17) file.
+This will generate new types based on the updated `schema.graphql` file. The changes need to be pushed in the commit.
+
 ## Deployment
 
 The app uses Render server to trigger deployment pipeline through `main` branch.
