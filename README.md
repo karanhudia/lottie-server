@@ -29,6 +29,10 @@ Lottie Server is the backend server for the Lottie Editor application. It handle
 - Websocket support for real-time updates
 - Collaboration support with multiple users
 
+## Live
+
+https://lottie-editor.onrender.com/
+
 ## Installation
 
 Follow these steps to set up the project locally:
