@@ -68,33 +68,34 @@ export const deleteLottieLayerProperty = (
   obj: LottieAnimation,
   layerSeq: number[],
 ) => {
-  const newObj = { ...obj };
-
-  let layer: Layer | undefined = newObj.layers[layerSeq[0]];
-  if (!layer) {
-    fastify.log.error('LayerDelete:: Layer not found', layer);
+  if (layerSeq.length === 0) {
     return obj;
   }
-  // Check if nested layers exist and the specific layer exists
-  let i = 1;
-  while (i < layerSeq.length - 1) {
-    if (layer?.layers?.[layerSeq[i]]) {
-      layer = layer.layers[layerSeq[i]];
 
-      i++;
+  const newObj = { ...obj };
+  let layer = newObj.layers[layerSeq[0]];
+
+  if (layerSeq.length === 1) {
+    // If the sequence has only one element, we delete the top-level layer
+    newObj.layers.splice(layerSeq[0], 1);
+    return newObj;
+  }
+
+  // Traverse to the parent of the target layer
+  for (let i = 1; i < layerSeq.length - 1; i++) {
+    if (layer.layers) {
+      layer = layer.layers[layerSeq[i]];
     } else {
-      fastify.log.error('LayerDelete:: Layer not found', layer, i);
-      return obj;
+      fastify.log.error('LayerDelete:: Invalid nested layer', layerSeq[i]);
+      return newObj;
     }
   }
 
-  // Check if the target layer to delete exists
-  const targetIndex = layerSeq[layerSeq.length - 1];
-  if (layer.layers?.[targetIndex]) {
-    layer.layers.splice(targetIndex, 1);
+  // Delete the target layer
+  if (layer.layers) {
+    layer.layers.splice(layerSeq[layerSeq.length - 1], 1);
   } else {
-    fastify.log.error('LayerDelete:: Layer to delete not found');
-    return obj;
+    fastify.log.error('LayerDelete:: Invalid nested layer', layerSeq[layerSeq.length - 1]);
   }
 
   return newObj;
