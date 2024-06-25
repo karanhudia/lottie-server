@@ -85,6 +85,14 @@ To run the test suite, use: `yarn test`
     ├── utils/            # Utility functions
     └── index.ts          # Entry point of the server
 
+## Deployment
+
+The app uses Render server to trigger deployment pipeline through `main` branch.
+
+**WebSocket address-** https://lottie-editor.onrender.com/
+
+**GraphQL address-** https://lottie-editor.onrender.com/graphql
+
 ## Contributing
 
 I welcome contributions to improve Lottie Server! Here’s how you can contribute:
