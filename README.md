@@ -58,6 +58,7 @@ Follow these steps to set up the project locally:
 ## Database
 
 This project is using MongoDB with only one collection at the moment to store the lottie animation json information. You can find the details below.
+The database is hosted on https://cloud.mongodb.com/
 
 <img src="https://github.com/karanhudia/lottie-server/assets/12070443/5c338ae7-efbe-4b36-908e-b9c1813fc1b8" alt="Database Model" width="30%">
 
