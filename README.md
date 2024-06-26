@@ -8,7 +8,6 @@ Lottie Server is the backend server for the Lottie Editor application. It handle
 - [Installation](#installation)
 - [Usage](#usage)
 - [Scripts](#scripts)
-- [Testing](#testing)
 - [Project Structure](#project-structure)
 - [Contributing](#contributing)
 - [License](#license)
@@ -70,13 +69,6 @@ This will start your fastify application and start listening on http://localhost
 
     yarn start: Starts the development server.
     yarn build: Builds the app for production.
-    yarn test: Runs the test suite.
-
-## Testing
-
-The project uses React Testing Library for unit and integration tests.
-
-To run the test suite, use: `yarn test`
 
 ## Project Structure
     
@@ -84,8 +76,8 @@ To run the test suite, use: `yarn test`
     ├── controllers/      # Controllers for handling requests
     ├── graphql/          # GraphQL schema and generated types
     ├── models/           # Database models for mongoose
+    ├── plugins/          # Fastify plugins to decorate the instance
     ├── routes/           # API and GraphQL routes
-    ├── test/             # Test related mocks and utils
     ├── utils/            # Utility functions
     └── index.ts          # Entry point of the server
 
@@ -106,6 +98,15 @@ The app uses Render server to trigger deployment pipeline through `main` branch.
 
 **GraphQL address-** https://lottie-editor.onrender.com/graphql
 
+## Open Issues
+
+- [ ] Creating rooms for websockets to limit sending updates to all connected clients (top priority)
+- [ ] Testing framework and tests for fastify
+- [ ] Testing socket.io
+- [ ] Adding Mocks and testing database connection 
+- [ ] Testing GraphQL endpoint
+- [ ] MongoDb Collection for authorization users for private editing
+
 ## Contributing
 
 I welcome contributions to improve Lottie Server! Here’s how you can contribute:
@@ -113,7 +114,6 @@ I welcome contributions to improve Lottie Server! Here’s how you can contribut
 - Fork the repository.
 - Create a new branch with a descriptive name.
 - Make your changes.
-- Ensure all tests pass.
 - Open a pull request describing your changes.
 
 ## License
