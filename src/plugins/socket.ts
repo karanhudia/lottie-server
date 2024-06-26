@@ -127,8 +127,8 @@ export const fastifySocketIo: FastifyPluginAsync = async (fastify) => {
             },
           );
 
-          // Broadcast this change to every client except the sender
-          socket.broadcast.emit(LottieSocketEvents.UpdateJson, message);
+          // Broadcast this change to every client including the sender
+          fastify.io.emit(LottieSocketEvents.UpdateJson, message);
 
           fastify.log.info(`Updating(${message.uuid}):: JSON lottie successfully updated`);
 
