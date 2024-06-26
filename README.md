@@ -55,6 +55,12 @@ Follow these steps to set up the project locally:
     MONGODB_COLLECTION_NAME= # Collection name for the database
     ```
 
+## Database
+
+This project is using MongoDB with only one collection at the moment to store the lottie animation json information. You can find the details below.
+
+<img src="https://github.com/karanhudia/lottie-server/assets/12070443/5c338ae7-efbe-4b36-908e-b9c1813fc1b8" alt="Database Model" width="30%">
+
 ## Usage
 
 To start the development server, run:
