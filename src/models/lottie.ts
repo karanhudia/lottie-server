@@ -5,6 +5,7 @@ export type LottieDocument = {
   updatedAt: string;
   json: object;
   uuid: string;
+  version: number;
 } & Document;
 
 const lottieSchema = new Schema({
@@ -22,6 +23,10 @@ const lottieSchema = new Schema({
   },
   json: {
     type: JSON,
+    required: true,
+  },
+  version: {
+    type: Number,
     required: true,
   },
 });

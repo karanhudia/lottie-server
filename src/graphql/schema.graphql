@@ -157,6 +157,12 @@ type LayerPayload {
     layer: [Int!]!
 }
 
+type UpdateLottieBroadcast {
+    version: Int!
+    json: JSON!
+    uuid: String!
+}
+
 union UpdateLottieMessage =
     | UpdateLottieColorMessage
     | UpdateLottieSpeedMessage
@@ -164,21 +170,25 @@ union UpdateLottieMessage =
     | DeleteLottieLayerMessage
 
 type UpdateLottieColorMessage {
+    version: Int!
     uuid: String!
     payload: ColorPayload!
 }
 
 type UpdateLottieSpeedMessage {
+    version: Int!
     uuid: String!
     payload: SpeedPayload!
 }
 
 type UpdateLottieScaleMessage {
+    version: Int!
     uuid: String!
     payload: ScalePayload!
 }
 
 type DeleteLottieLayerMessage {
+    version: Int!
     uuid: String!
     payload: LayerPayload!
 }
@@ -188,6 +198,7 @@ type Lottie {
     updatedAt: Date!
     uuid: String!
     json: JSON!
+    version: Int!
 }
 
 type Query {

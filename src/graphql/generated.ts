@@ -72,6 +72,7 @@ export type DeleteLottieLayerMessage = {
   __typename?: 'DeleteLottieLayerMessage';
   payload: LayerPayload;
   uuid: Scalars['String']['output'];
+  version: Scalars['Int']['output'];
 };
 
 export type Easing = {
@@ -117,6 +118,7 @@ export type Lottie = {
   json: Scalars['JSON']['output'];
   updatedAt: Scalars['Date']['output'];
   uuid: Scalars['String']['output'];
+  version: Scalars['Int']['output'];
 };
 
 export type LottieAnimation = {
@@ -231,10 +233,18 @@ export type Transform = {
   s: AnimatedProperty;
 };
 
+export type UpdateLottieBroadcast = {
+  __typename?: 'UpdateLottieBroadcast';
+  json: Scalars['JSON']['output'];
+  uuid: Scalars['String']['output'];
+  version: Scalars['Int']['output'];
+};
+
 export type UpdateLottieColorMessage = {
   __typename?: 'UpdateLottieColorMessage';
   payload: ColorPayload;
   uuid: Scalars['String']['output'];
+  version: Scalars['Int']['output'];
 };
 
 export type UpdateLottieMessage =
@@ -247,12 +257,14 @@ export type UpdateLottieScaleMessage = {
   __typename?: 'UpdateLottieScaleMessage';
   payload: ScalePayload;
   uuid: Scalars['String']['output'];
+  version: Scalars['Int']['output'];
 };
 
 export type UpdateLottieSpeedMessage = {
   __typename?: 'UpdateLottieSpeedMessage';
   payload: SpeedPayload;
   uuid: Scalars['String']['output'];
+  version: Scalars['Int']['output'];
 };
 
 export type ResolverTypeWrapper<T> = Promise<T> | T;
@@ -381,6 +393,7 @@ export type ResolversTypes = {
   SpeedPayload: ResolverTypeWrapper<SpeedPayload>;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
   Transform: ResolverTypeWrapper<Transform>;
+  UpdateLottieBroadcast: ResolverTypeWrapper<UpdateLottieBroadcast>;
   UpdateLottieColorMessage: ResolverTypeWrapper<UpdateLottieColorMessage>;
   UpdateLottieMessage: ResolverTypeWrapper<
     ResolversUnionTypes<ResolversTypes>['UpdateLottieMessage']
@@ -423,6 +436,7 @@ export type ResolversParentTypes = {
   SpeedPayload: SpeedPayload;
   String: Scalars['String']['output'];
   Transform: Transform;
+  UpdateLottieBroadcast: UpdateLottieBroadcast;
   UpdateLottieColorMessage: UpdateLottieColorMessage;
   UpdateLottieMessage: ResolversUnionTypes<ResolversParentTypes>['UpdateLottieMessage'];
   UpdateLottieScaleMessage: UpdateLottieScaleMessage;
@@ -506,6 +520,7 @@ export type DeleteLottieLayerMessageResolvers<
 > = {
   payload?: Resolver<ResolversTypes['LayerPayload'], ParentType, ContextType>;
   uuid?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  version?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -574,6 +589,7 @@ export type LottieResolvers<
   json?: Resolver<ResolversTypes['JSON'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
   uuid?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  version?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -721,6 +737,17 @@ export type TransformResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type UpdateLottieBroadcastResolvers<
+  ContextType = any,
+  ParentType extends
+    ResolversParentTypes['UpdateLottieBroadcast'] = ResolversParentTypes['UpdateLottieBroadcast'],
+> = {
+  json?: Resolver<ResolversTypes['JSON'], ParentType, ContextType>;
+  uuid?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  version?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type UpdateLottieColorMessageResolvers<
   ContextType = any,
   ParentType extends
@@ -728,6 +755,7 @@ export type UpdateLottieColorMessageResolvers<
 > = {
   payload?: Resolver<ResolversTypes['ColorPayload'], ParentType, ContextType>;
   uuid?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  version?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -753,6 +781,7 @@ export type UpdateLottieScaleMessageResolvers<
 > = {
   payload?: Resolver<ResolversTypes['ScalePayload'], ParentType, ContextType>;
   uuid?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  version?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -763,6 +792,7 @@ export type UpdateLottieSpeedMessageResolvers<
 > = {
   payload?: Resolver<ResolversTypes['SpeedPayload'], ParentType, ContextType>;
   uuid?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  version?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -794,6 +824,7 @@ export type Resolvers<ContextType = any> = {
   SocketAcknowledgement?: SocketAcknowledgementResolvers<ContextType>;
   SpeedPayload?: SpeedPayloadResolvers<ContextType>;
   Transform?: TransformResolvers<ContextType>;
+  UpdateLottieBroadcast?: UpdateLottieBroadcastResolvers<ContextType>;
   UpdateLottieColorMessage?: UpdateLottieColorMessageResolvers<ContextType>;
   UpdateLottieMessage?: UpdateLottieMessageResolvers<ContextType>;
   UpdateLottieScaleMessage?: UpdateLottieScaleMessageResolvers<ContextType>;

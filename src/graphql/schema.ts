@@ -34,6 +34,7 @@ export const schema = createSchema({
             updatedAt: new Date(),
             uuid: _args.uuid,
             json: _args.json,
+            version: 1,
           });
 
           return {
@@ -43,10 +44,11 @@ export const schema = createSchema({
         } catch (error) {
           console.error('Error fetching GraphQL');
 
-          return {
-            code: 500,
-            status: 'Could not create new JSON',
-          };
+          throw new GraphQLError('Could not create new JSON', {
+            extensions: {
+              code: 'INTERNAL_SERVER_ERROR',
+            },
+          });
         }
       },
     },

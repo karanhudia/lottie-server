@@ -12,6 +12,7 @@ import {
   LottieAnimation,
   LottieSocketEvents,
   SocketAcknowledgement,
+  UpdateLottieBroadcast,
   UpdateLottieMessage,
 } from '../graphql/generated';
 
@@ -40,7 +41,7 @@ export const fastifySocketIo: FastifyPluginAsync = async (fastify) => {
             createdAt: new Date(),
             updatedAt: new Date(),
             uuid: message.uuid,
-            json: message.payload?.json,
+            json: message.payload?.json as object,
           });
 
           fastify.log.info('Created:: JSON lottie');
@@ -66,78 +67,99 @@ export const fastifySocketIo: FastifyPluginAsync = async (fastify) => {
         message: UpdateLottieMessage,
         acknowledgement: (response: SocketAcknowledgement) => void,
       ) => {
-        fastify.log.info(`Updating(${message.uuid}):: JSON lottie`);
+        const { uuid, payload, version } = message;
 
-        const foundLottie = await Lottie.findOne({ uuid: message.uuid });
+        fastify.log.info(`Updating(${uuid}):: JSON lottie`);
+
+        const foundLottie = await Lottie.findOne({ uuid });
 
         if (!foundLottie) {
-          fastify.log.error(`Updating(${message.uuid}):: JSON lottie not found`);
+          fastify.log.error(`Updating(${uuid}):: JSON lottie not found`);
 
           acknowledgement({
             code: 404,
-            status: 'Could not find JSON',
+            status: 'Not Found',
           });
 
-          return;
+          return; // Breaks the statement going forward
+        }
+
+        if (foundLottie.version !== version) {
+          fastify.log.error(`Updating(${uuid}):: Version Mismatch`);
+
+          acknowledgement({
+            code: 409,
+            status: 'Version Mismatch',
+          });
+
+          return; // Breaks the statement going forward
         }
 
         try {
           let updatedLottie = undefined;
 
-          switch (message.payload.__typename) {
+          switch (payload.__typename) {
             case 'ColorPayload':
               updatedLottie = updateLottieColorProperty(
                 fastify,
                 foundLottie.json as LottieAnimation,
-                message.payload.layer,
-                message.payload.shape,
-                message.payload.shapeItem,
-                message.payload.color,
+                payload.layer,
+                payload.shape,
+                payload.shapeItem,
+                payload.color,
               );
 
-              fastify.log.info(`Updating(${message.uuid}):: JSON lottie color`);
+              fastify.log.info(`Updating(${uuid}):: JSON lottie color`);
               break;
 
             case 'SpeedPayload':
               updatedLottie = updateLottieSpeedProperty(
                 foundLottie.json as LottieAnimation,
-                message.payload.frameRate,
+                payload.frameRate,
               );
 
-              fastify.log.info(`Updating(${message.uuid}):: JSON lottie speed`);
+              fastify.log.info(`Updating(${uuid}):: JSON lottie speed`);
               break;
             case 'LayerPayload':
               updatedLottie = deleteLottieLayerProperty(
                 fastify,
                 foundLottie.json as LottieAnimation,
-                message.payload.layer,
+                payload.layer,
               );
 
-              fastify.log.info(`Updating(${message.uuid}):: JSON lottie layer deleted`);
+              fastify.log.info(`Updating(${uuid}):: JSON lottie layer deleted`);
               break;
           }
 
+          const newVersion = version + 1;
+
+          // Update the db with latest change
           await Lottie.updateOne(
-            { uuid: message.uuid },
+            { uuid },
             {
               $set: {
                 updatedAt: new Date(),
                 json: updatedLottie,
+                version: newVersion,
               },
             },
           );
 
           // Broadcast this change to every client including the sender
-          fastify.io.emit(LottieSocketEvents.UpdateJson, message);
+          fastify.io.emit(LottieSocketEvents.UpdateJson, {
+            version: newVersion,
+            uuid,
+            json: updatedLottie,
+          } as UpdateLottieBroadcast);
 
-          fastify.log.info(`Updating(${message.uuid}):: JSON lottie successfully updated`);
+          fastify.log.info(`Updating(${uuid}):: JSON lottie successfully updated`);
 
           acknowledgement({
             code: 200,
             status: 'ok',
           });
         } catch {
-          fastify.log.error(`Updating(${message.uuid}):: Internal Server Error`);
+          fastify.log.error(`Updating(${uuid}):: Internal Server Error`);
 
           acknowledgement({
             code: 500,
