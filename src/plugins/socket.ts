@@ -85,7 +85,9 @@ export const fastifySocketIo: FastifyPluginAsync = async (fastify) => {
         }
 
         if (foundLottie.version !== version) {
-          fastify.log.error(`Updating(${uuid}):: Version Mismatch`);
+          fastify.log.error(
+            `Updating(${uuid}):: Version Mismatch - GOT-${String(version)} FOUND-${String(foundLottie.version)}`,
+          );
 
           acknowledgement({
             code: 409,
