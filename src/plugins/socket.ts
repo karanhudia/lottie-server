@@ -24,9 +24,15 @@ declare module 'fastify' {
 export const fastifySocketIo: FastifyPluginAsync = async (fastify) => {
   await fastify.register(fastifyIO);
 
-  fastify.io.on('connection', (socket) => {
-    fastify.log.info('Socket connected!', socket.id);
+  fastify.io.on('connection', async (socket) => {
+    const uuid = socket.handshake.query.uuid as string;
+    if (uuid && !socket.rooms.has(uuid)) {
+      fastify.log.info(`Client(${socket.id}):: Joining Room - ${uuid}`);
+      await socket.join(uuid);
+      fastify.log.info(`Client(${socket.id}):: Joined Room - ${uuid}`);
+    }
 
+    // This method is deprecated, use createLottie from GraphQL instead
     socket.on(
       LottieSocketEvents.CreateJson,
       async (
@@ -127,8 +133,8 @@ export const fastifySocketIo: FastifyPluginAsync = async (fastify) => {
             },
           );
 
-          // Broadcast this change to every client including the sender
-          fastify.io.emit(LottieSocketEvents.UpdateJson, message);
+          // Broadcast this change to every client in the room including the sender
+          fastify.io.to(message.uuid).emit(LottieSocketEvents.UpdateJson, message);
 
           fastify.log.info(`Updating(${message.uuid}):: JSON lottie successfully updated`);
 
