@@ -5,6 +5,7 @@ import { io as ioClient, type Socket as ClientSocket } from 'socket.io-client';
 import { type Socket as ServerSocket } from 'socket.io';
 
 import {
+  LottieAnimation,
   LottieSocketEvents,
   SocketAcknowledgement,
   UpdateLottieBroadcast,
@@ -20,10 +21,10 @@ import { Lottie } from '../models/lottie';
 
 const mockAcknowledgement: SocketAcknowledgement = { code: 200, status: 'ok' };
 const mockUpdateLottieMessage: UpdateLottieMessage = {
-  __typename: 'UpdateLottieSpeedMessage',
   uuid: 'custom-uuid',
   version: 1,
   payload: {
+    __typename: 'SpeedPayload',
     frameRate: 40,
   },
 };
@@ -107,24 +108,29 @@ describe('WebSocket tests', () => {
     });
 
     expect(response).toStrictEqual(mockAcknowledgement);
-    await Lottie.findOne({ uuid: 'custom-uuid' }).then((result) => {
-      expect(result?.version).toEqual(1);
-    });
+
+    const result = await Lottie.findOne({ uuid: 'custom-uuid' });
+    expect(result).not.toBeNull();
+    expect(result?.version).toEqual(1);
+    expect(result?.json).toEqual(mockLottieAnimation);
   });
 
   test('should show error for uuid not found', (done) => {
     const nonExistingLottieUpdate: UpdateLottieMessage = {
-      __typename: 'UpdateLottieSpeedMessage',
       uuid: 'new-uuid',
       version: 1,
       payload: {
+        __typename: 'SpeedPayload',
         frameRate: 10,
       },
     };
 
-    clientSocket.emit(LottieSocketEvents.UpdateJson, nonExistingLottieUpdate, (response) => {
+    clientSocket.emit(LottieSocketEvents.UpdateJson, nonExistingLottieUpdate, async (response) => {
       expect(response.code).toBe(404);
       expect(response.status).toBe('Not Found');
+
+      const result = await Lottie.findOne({ uuid: 'new-uuid' });
+      expect(result).toBeNull();
 
       done();
     });
@@ -143,13 +149,26 @@ describe('WebSocket tests', () => {
     );
   });
 
-  test('should receive update json events (server receives)', (done) => {
-    serverSocket.on(LottieSocketEvents.UpdateJson, (message) => {
+  test('should receive update json events (server receives) and update database', (done) => {
+    serverSocket.once(LottieSocketEvents.UpdateJson, (message) => {
       expect(message).toEqual(mockUpdateLottieMessage);
-      done();
     });
 
-    clientSocket.emit(LottieSocketEvents.UpdateJson, mockUpdateLottieMessage, () => undefined);
+    clientSocket.emit(LottieSocketEvents.UpdateJson, mockUpdateLottieMessage, async (response) => {
+      expect(response).toStrictEqual(mockAcknowledgement);
+      const updated = await Lottie.findOne({ uuid: mockUpdateLottieMessage.uuid });
+      expect(updated?.version).toEqual(mockUpdateLottieMessage.version + 1);
+
+      if (updated?.json) {
+        expect((updated.json as LottieAnimation).fr).toEqual(
+          mockUpdateLottieMessage.payload.frameRate,
+        );
+      } else {
+        throw new Error('JSON not updated');
+      }
+
+      done();
+    });
   });
 
   test('should broadcast update json events (client receives)', (done) => {
@@ -161,7 +180,7 @@ describe('WebSocket tests', () => {
       },
     };
 
-    clientSocket.on(LottieSocketEvents.UpdateJson, (message) => {
+    clientSocket.once(LottieSocketEvents.UpdateJson, (message) => {
       expect(message).toStrictEqual(broadcastMessage);
       done();
     });
