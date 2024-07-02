@@ -5,7 +5,7 @@ import fastifyIO from 'fastify-socket.io';
 import { mongoDbPlugin } from './plugins/db';
 import { registerRoutes } from './routes/mainRoutes';
 import { registerGraphQLRoutes } from './routes/graphqlRoutes';
-import { registerSockets } from './routes/sockets';
+import { registerSockets } from './plugins/socket';
 
 export const build = () => {
   const fastify = Fastify({
