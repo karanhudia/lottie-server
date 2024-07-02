@@ -5,10 +5,16 @@ Lottie Server is the backend server for the Lottie Editor application. It handle
 ## Table of Contents
 
 - [Features](#features)
+- [Live](#live)
 - [Installation](#installation)
+- [Database and Architecture](#database-and-architecture)
 - [Usage](#usage)
 - [Scripts](#scripts)
 - [Project Structure](#project-structure)
+- [GraphQL and Codegen](#graphql-and-codegen)
+- [Testing](#testing)
+- [Deplopyment](#deployment)
+- [Open Issues](#open-issues)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -55,12 +61,12 @@ Follow these steps to set up the project locally:
     MONGODB_COLLECTION_NAME= # Collection name for the database
     ```
 
-## Database
+## Database and Architecture
 
 This project is using MongoDB with only one collection at the moment to store the lottie animation json information. You can find the details below.
 The database is hosted on https://cloud.mongodb.com/
 
-<img src="https://github.com/karanhudia/lottie-server/assets/12070443/5c338ae7-efbe-4b36-908e-b9c1813fc1b8" alt="Database Model" width="30%">
+![image](https://github.com/karanhudia/lottie-server/assets/12070443/82d915df-5f1a-48e9-b9ff-2fe8d7e2b976)
 
 ## Usage
 
@@ -76,6 +82,10 @@ This will start your fastify application and start listening on http://localhost
 
     yarn start: Starts the development server.
     yarn build: Builds the app for production.
+    yarn test: Runs tests with jest
+    yarn type-check: Runs tsc check
+    yarn lint: Runs linting with eslint
+    yarn codegen: Generates new GraphQL types (server should be running)
 
 ## Project Structure
     
@@ -97,6 +107,13 @@ The script has to be run everytime you change the
 [schema.graphql](https://github.com/karanhudia/lottie-server/blob/main/src/graphql/schema.graphql#L17) file.
 This will generate new types based on the updated `schema.graphql` file. The changes need to be pushed in the commit.
 
+## Testing
+
+The test setup is using jest with TypeScript support. There are other several libraries being used to support the tests, for example-
+
+- `mongodb-memory-server` to create mongodb database in memory
+- `socket.io-client` to mock client socket connection
+
 ## Deployment
 
 The app uses Render server to trigger deployment pipeline through `main` branch.
@@ -108,9 +125,6 @@ The app uses Render server to trigger deployment pipeline through `main` branch.
 ## Open Issues
 
 - [ ] Creating rooms for websockets to limit sending updates to all connected clients (top priority)
-- [ ] Testing framework and tests for fastify
-- [ ] Testing socket.io
-- [ ] Adding Mocks and testing database connection 
 - [ ] Testing GraphQL endpoint
 - [ ] MongoDb Collection for authorization users for private editing
 
