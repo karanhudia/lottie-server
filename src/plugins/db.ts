@@ -3,6 +3,16 @@ import fp from 'fastify-plugin';
 import { connect, connection } from 'mongoose';
 import { Lottie } from '../models/lottie';
 
+declare module 'fastify' {
+  interface FastifyInstance {
+    db: {
+      models: {
+        Lottie: typeof Lottie;
+      };
+    };
+  }
+}
+
 interface DbConnectorOptions {
   uri: string;
 }
