@@ -1,10 +1,17 @@
-import { FastifyInstance, FastifyPluginAsync } from 'fastify';
+import { FastifyPluginAsync } from 'fastify';
 import fp from 'fastify-plugin';
-import { connection, connect } from 'mongoose';
+import { connect, connection } from 'mongoose';
 import { Lottie } from '../models/lottie';
 
-const dbConnector: FastifyPluginAsync = async (fastify: FastifyInstance) => {
-  if (!process.env.MONGODB_URI) {
+interface DbConnectorOptions {
+  uri: string;
+}
+
+const dbConnector: FastifyPluginAsync<DbConnectorOptions> = async (fastify, options) => {
+  const { uri } = options;
+
+  if (!uri) {
+    fastify.log.error('MongoDB URI not provided');
     return;
   }
 
@@ -15,7 +22,7 @@ const dbConnector: FastifyPluginAsync = async (fastify: FastifyInstance) => {
     connection.on('disconnected', () => {
       fastify.log.error('MongoDB disconnected');
     });
-    await connect(process.env.MONGODB_URI);
+    await connect(uri);
 
     const models = { Lottie };
     fastify.decorate('db', { models });
