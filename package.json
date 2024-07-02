@@ -6,7 +6,10 @@
   "scripts": {
     "build": "tsc -p tsconfig.json && cp src/graphql/schema.graphql dist/graphql/schema.graphql",
     "start": "ts-node-dev --respawn --transpile-only src/index.ts",
-    "codegen": "graphql-codegen --config codegen.ts"
+    "codegen": "graphql-codegen --config codegen.ts",
+    "lint": "eslint 'src/**/*.ts' --ignore-pattern 'src/**/*.test.ts'",
+    "type-check": "tsc",
+    "test": "jest"
   },
   "keywords": [],
   "author": "",
