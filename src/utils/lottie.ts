@@ -1,4 +1,4 @@
-import { Layer, LottieAnimation } from '../graphql/generated';
+import { LottieAnimation } from '../graphql/generated';
 import { FastifyInstance } from 'fastify';
 
 export const updateLottieColorProperty = (
@@ -9,9 +9,10 @@ export const updateLottieColorProperty = (
   shapeItemSeq: number,
   color: number[],
 ) => {
-  let newObj = { ...obj };
+  const newObj = { ...obj };
 
-  let layer: Layer = newObj.layers[layerSeq[0]];
+  let layer = newObj.layers[layerSeq[0]];
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (!layer) {
     fastify.log.error('ColorUpdate:: Layer not found', layer);
     return obj;
@@ -19,7 +20,7 @@ export const updateLottieColorProperty = (
   // Check if nested layers exist and the specific layer exists
   let i = 1;
   while (i < layerSeq.length) {
-    if (layer?.layers?.[layerSeq[i]]) {
+    if (layer.layers?.[layerSeq[i]]) {
       layer = layer.layers[layerSeq[i]];
 
       i++;
@@ -30,7 +31,7 @@ export const updateLottieColorProperty = (
   }
 
   // Check if shapes exist and the specific shape exists
-  if (!layer.shapes || !layer.shapes[shapeSeq]) {
+  if (!layer.shapes?.[shapeSeq]) {
     fastify.log.error('ColorUpdate:: Shape not found');
     return obj;
   }
@@ -38,7 +39,7 @@ export const updateLottieColorProperty = (
   const shape = layer.shapes[shapeSeq];
 
   // Check if 'it' array exists and the specific shape item exists
-  if (!shape?.it || !shape?.it[shapeItemSeq]) {
+  if (!shape.it?.[shapeItemSeq]) {
     fastify.log.error('ColorUpdate:: ShapeItem not found');
     return obj;
   }
